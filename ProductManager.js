@@ -11,11 +11,7 @@ class ProductManager {
             const data = await fs.promises.readFile(this.path, 'utf-8');
             this.products = data ? JSON.parse(data) : [];
         } catch (error) {
-            if (error.code === 'ENOENT') {
-                this.products = [];
-            } else {
-                throw new Error(`Error al cargar productos: ${error.message}`);
-            }
+            throw new Error(`Error al cargar productos: ${error.message}`);
         }
     }
 
