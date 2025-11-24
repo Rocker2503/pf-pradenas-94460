@@ -1,0 +1,13 @@
+[
+  {
+    "id": 1,
+    "title": "Producto de Ejemplo edit",
+    "description": "Una descripción detallada.",
+    "code": "A23B",
+    "price": 100.99,
+    "status": true,
+    "stock": 50,
+    "category": "Electrónica",
+    "thumbnails": ["/img/path1.jpg", "/img/path2.jpg"]
+  }
+]
