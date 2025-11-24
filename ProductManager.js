@@ -49,12 +49,12 @@ class ProductManager {
         const newProduct = {
             id: newId,
             ...productData,
-            status: productData.status !== undefined ? productData.status : true, // Default true
-            thumbnails: productData.thumbnails || [] // Default array vacío
+            status: productData.status !== undefined ? productData.status : true, 
+            thumbnails: productData.thumbnails || [] 
         };
 
         this.products.push(newProduct);
-        await this.#saveProducts(); // Guarda los cambios
+        await this.#saveProducts(); 
         
         return newProduct;
     }
@@ -88,13 +88,10 @@ class ProductManager {
         const initialLength = this.products.length;
 
         const product = this.products.find((p) => p.id === id);
-        if(product === undefined) throw new Error(`Producto con ID ${id} no encontrado para eliminar.`);
+        if(!product) throw new Error(`Producto con ID ${id} no encontrado para eliminar.`);
 
+        //filtramos para eliminar el producto
         this.products = this.products.filter(p => p.id !== id);
-
-        if (this.products.length === initialLength) {
-            return new Error(`Producto con ID ${id} no encontrado para eliminar.`);
-        }
 
         await this.#saveProducts();
     }

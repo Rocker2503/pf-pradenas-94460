@@ -2,14 +2,14 @@ const express = require('express');
 const app = express();
 const PORT = 8080;
 
-//Creando el ProductManager para gestionar los productos
+//Creando el ProductManager y CartManager para gestionar los datos
 const ProductManager = require('./ProductManager.js');
 const CartManager = require('./CartManager.js'); 
 
 const productManager = new ProductManager('products.json');
 const cartManager = new CartManager('carts.json', 'products.json'); 
 
-//Router para pasar solamente a los productos
+//Routers
 const productsRouter = require('./routes/products.router.js')(productManager);
 const cartsRouter = require('./routes/carts.router.js')(cartManager);
 

@@ -65,11 +65,14 @@ class CartManager{
         const cart = this.carts.find((c) => c.id === cartId);
         if(!cart) throw new Error(`Carro con ID ${cartId} no encontrado.`);
 
-        const productInCartIndex = cart.products.findIndex(p => p.product === productId);
-        if(productInCartIndex !== -1 ){
-            cart.products[productInCartIndex].quantity += 1;
+        const productInCart = cart.products.find((p) => p.product === productId);
+        if(!productInCart){
+            cart.products.push({
+                product: productId,
+                quantity: 1
+            });
         }else{
-            cart.products.push({ product: productId, quantity: 1 });
+            productInCart.quantity += 1;
         }
 
         await this.#saveCarts();
