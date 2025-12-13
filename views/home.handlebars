@@ -1,0 +1,24 @@
+<h1>Productos</h1>
+
+<table class="table w-100">
+    <thead>
+        <tr>
+            <th>Código</th>
+            <th>Nombre</th>
+            <th>Precio</th>
+            <th>Stock</th>
+            <th>Categoria</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each productos}}
+        <tr>
+            <td>{{code}}</td>
+            <td>{{title}}</td>
+            <td>{{price}}</td>
+            <td>{{stock}}</td>
+            <td>{{category}}</td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>

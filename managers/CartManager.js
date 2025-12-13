@@ -1,17 +1,15 @@
-const fs = require('node:fs'); 
-const ProductManager = require('./ProductManager');
+import { promises } from 'node:fs'; 
+import { productManager } from './ProductManager.js';
 
 class CartManager{
     constructor(path, productFilePath){
         this.path = path;
         this.carts = [];
-
-        this.productManager = new ProductManager(productFilePath);
     }
 
     #loadCarts = async() => {
         try{
-            const data = await fs.promises.readFile(this.path, 'utf-8');
+            const data = await promises.readFile(this.path, 'utf-8');
             this.carts = data ? JSON.parse(data) : [];
         }
         catch(error){
@@ -26,7 +24,7 @@ class CartManager{
     #saveCarts = async() => {
         try{
             const data = this.carts;
-            await fs.promises.writeFile(this.path, JSON.stringify(data));
+            await promises.writeFile(this.path, JSON.stringify(data));
         }
         catch(error){
             throw new Error(`Error al guardar carro: ${error.message}`);
@@ -59,7 +57,7 @@ class CartManager{
     addProductInCart = async(cartId, productId) => {
         await this.#loadCarts();
 
-        const product = await this.productManager.getProductById(productId);
+        const product = await productManager.getProductById(productId);
         if(!product) throw new Error(`Producto con ID ${productId} no encontrado.`);
 
         const cart = this.carts.find((c) => c.id === cartId);
@@ -80,4 +78,4 @@ class CartManager{
     }
 }
 
-module.exports = CartManager;
+export const cartManager = new CartManager('./data/carts.json', './data/products.json');

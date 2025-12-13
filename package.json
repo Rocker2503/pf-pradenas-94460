@@ -2,6 +2,7 @@
   "name": "pf-pradenas-94460",
   "version": "1.0.0",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,6 +11,9 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "express": "^5.1.0"
+    "express": "^5.2.1",
+    "express-handlebars": "^8.0.1",
+    "handlebars": "^4.7.8",
+    "socket.io": "^4.8.1"
   }
 }

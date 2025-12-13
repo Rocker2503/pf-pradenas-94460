@@ -1,0 +1,90 @@
+<div class="container mt-4">
+    <h2 class="mt-5 mb-3">Agregar Nuevo Producto</h2>
+    <form id="formProducts" class="p-3 border rounded shadow-sm bg-light mb-5">
+        <div class="row mb-3">
+            <div class="col-12 col-md-6">
+                <div class="form-group">
+                    <label for="code" class="form-label">Código</label>
+                    <input type="text" class="form-control" id="code" name="code" placeholder="Ingrese el código del producto" required />
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="form-group">
+                    <label for="title" class="form-label">Nombre</label>
+                    <input type="text" class="form-control" id="title" name="title" placeholder="Nombre del producto" required />
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mb-3">
+            <div class="col-12 col-md-6">
+                <div class="form-group">
+                    <label for="description" class="form-label">Descripción</label>
+                    <input type="text" class="form-control" id="description" name="description" placeholder="Breve descripción" />
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="form-group">
+                    <label for="price" class="form-label">Precio</label>
+                    <input type="number" class="form-control" id="price" name="price" step="0.01" min="0" placeholder="0.00" required />
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mb-3">
+            <div class="col-12 col-md-6">
+                <div class="form-group">
+                    <label for="category" class="form-label">Categoría</label>
+                    <input type="text" class="form-control" id="category" name="category" placeholder="Ej: Electrónica, Ropa" />
+                </div>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="form-group">
+                    <label for="stock" class="form-label">Stock</label>
+                    <input type="number" class="form-control" id="stock" name="stock" min="0" placeholder="Cantidad en stock" required />
+                </div>
+            </div>
+        </div>
+        
+        <div class="form-group text-end mt-4">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-save"></i> Guardar Producto
+            </button>
+        </div>
+    </form>
+</div>
+
+<br>
+
+<div class="container">
+    <table class="table table-striped w-100" id="table-products">
+        <thead>
+            <tr>
+                <th>Codigo</th>
+                <th>Nombre</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="product-list-body">
+            {{#each productos}}
+            <tr>
+                <td>{{code}}</td>
+                <td>{{title}}</td>
+                <td>{{price}}</td>
+                <td>{{stock}}</td>
+                <td>
+                    <button class="btn btn-danger btn-sm delete-product" data-id="{{id}}">
+                        Eliminar
+                    </button>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>
+
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/index.js"></script>
