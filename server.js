@@ -1,8 +1,11 @@
+import "dotenv/config"; // <--- ESTO DEBE IR PRIMERO QUE TODO
 import handlebars from "express-handlebars";
 import express from "express";
 import { __dirname } from "./utils.js";
 import { Server } from "socket.io";
 import http from 'http';
+
+import { initMongo } from "./config/connection.js";
 
 const app = express();
 const PORT = 8080;
@@ -33,10 +36,17 @@ app.use('/', viewsRouterFunction(socketServer));
 const realTimeHandler = configureRealTimeSockets(socketServer); 
 socketServer.on('connection', realTimeHandler);
 
-serverHttp.listen(PORT, () => { // Usamos serverHttp.listen
-    console.log(`Servidor escuchando en http://localhost:${PORT}`);
-});
-
+initMongo()
+    .then(() => {
+        // Solo cuando la DB está lista, encendemos el servidor
+        serverHttp.listen(PORT, () => {
+            console.log(`Servidor escuchando en http://localhost:${PORT}`);
+        });
+    })
+    .catch((error) => {
+        console.error("No se pudo iniciar el servidor debido a un fallo en la base de datos:", error);
+        process.exit(1);
+    });
 
 
 
