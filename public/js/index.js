@@ -13,7 +13,7 @@ formProducts.addEventListener('submit', (e) =>{
         price: parseFloat(document.getElementById('price').value), 
         category: document.getElementById('category').value,
         stock: parseInt(document.getElementById('stock').value, 10),
-        thumbnails: ''
+        status: true
     };
 
     socket.emit('add_product', newProduct);
@@ -48,7 +48,7 @@ function renderProductList(productos) {
                 <td>$${producto.price}</td>
                 <td>${producto.stock}</td>
                 <td>
-                    <button class="btn btn-danger btn-sm delete-product" data-id="${producto.id}">
+                    <button class="btn btn-danger btn-sm delete-product" data-id="${producto._id}">
                         Eliminar
                     </button>
                 </td>

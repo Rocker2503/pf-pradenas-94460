@@ -1,85 +1,52 @@
-import {productManager} from '../managers/ProductManager.js';
 import Router from "express";
-
+import { ProductModel } from "../models/product-model.js";
 
 const router = Router();
 
 // GET /api/products/
 router.get('/', async (req, res) => {
     try {
-        const products = await productManager.getProducts();
-        res.status(200).json(products);
-    } catch (error) {
-        res.status(500).json({ error: 'Error interno del servidor al listar productos', details: error.message });
-    }
-});
+        // Recibir parámetros por query params [cite: 20]
+        const { limit = 10, page = 1, sort, query } = req.query; 
 
-// GET /api/products/:pid
-router.get('/:pid', async (req, res) => {
-    const productId = parseInt(req.params.pid); 
-    try {
-        const product = await productManager.getProductById(productId);
-        
-        if (product) {
-            res.status(200).json(product);
-        } else {
-            res.status(404).json({ error: `Producto con ID ${productId} no encontrado.` });
+        // Configurar el filtro (query) [cite: 24, 40]
+        // Filtra por categoría o por disponibilidad (status)
+        let filter = {};
+        if (query) {
+            filter = { 
+                $or: [
+                    { category: query },
+                    { status: query === 'true' } 
+                ]
+            };
         }
-    } catch (error) {
-        res.status(500).json({ error: 'Error interno del servidor al buscar producto' });
-    }
-});
 
-// POST /api/products
-router.post('/', async (req, res) => {
-    try{
-        const productData = req.body;
-        
-        if (!productData.title || typeof productData.price !== 'number' || !productData.code) {
-            return res.status(400).json({ status: 'error', message: 'Faltan campos obligatorios o los tipos de datos son incorrectos.' });
-        }
-        const createdProduct = productManager.addProduct(productData);
-        res.status(201).json({ status: 'success', data: createdProduct });
-    }
-    catch(error){
-        res.status(500).json({ status: 'error', message: 'Error interno del servidor al crear producto', details: error.message });
-    }
-});
+        // Configurar opciones de paginación y ordenamiento [cite: 25, 27]
+        const options = {
+            limit: parseInt(limit),
+            page: parseInt(page),
+            sort: sort ? { price: sort === 'asc' ? 1 : -1 } : {}, 
+            lean: true // Importante para Handlebars después
+        };
 
-// PUT /api/products/:pid
-router.put('/:pid', async (req, res) => {
-    const productId = parseInt(req.params.pid);
-    const updates = req.body;
+        const result = await ProductModel.paginate(filter, options);
 
-    if (isNaN(productId)) {
-        return res.status(400).json({ status: 'error', message: 'El ID del producto debe ser un número válido.' });
-    }
-
-    try {
-        const updatedProduct = await productManager.updateProduct(productId, updates);
-
-        res.status(200).json({ status: 'success', message: `Producto con ID ${productId} actualizado.`, data: updatedProduct });
+        // Formato de respuesta requerido por la entrega [cite: 28, 29]
+        res.status(200).json({
+            status: 'success', 
+            payload: result.docs, 
+            totalPages: result.totalPages, 
+            prevPage: result.prevPage, 
+            nextPage: result.nextPage, 
+            page: result.page, 
+            hasPrevPage: result.hasPrevPage, 
+            hasNextPage: result.hasNextPage, 
+            prevLink: result.hasPrevPage ? `/api/products?page=${result.prevPage}&limit=${limit}${sort ? `&sort=${sort}` : ''}${query ? `&query=${query}` : ''}` : null, 
+            nextLink: result.hasNextPage ? `/api/products?page=${result.nextPage}&limit=${limit}${sort ? `&sort=${sort}` : ''}${query ? `&query=${query}` : ''}` : null 
+        });
 
     } catch (error) {
-        res.status(500).json({ status: 'error', message: 'Error interno del servidor al actualizar producto', details: error.message });
-    }
-});
-
-// DELETE /api/products/:pid
-router.delete('/:pid', async (req, res) => {
-    const productId = parseInt(req.params.pid);
-
-    if (isNaN(productId)) {
-        return res.status(400).json({ status: 'error', message: 'El ID del producto debe ser un número válido.' });
-    }
-
-    try {
-        await productManager.deleteProduct(productId);
-
-        res.status(200).json({ status: 'success', message: `Producto con ID ${productId} eliminado correctamente.` });
-        
-    } catch (error) {
-        res.status(500).json({ status: 'error', message: 'Error interno del servidor al eliminar producto', details: error.message });
+        res.status(500).json({ status: 'error', message: error.message });
     }
 });
 

@@ -1,24 +1,77 @@
-<h1>Productos</h1>
+<div class="container mt-4">
+    <h1 class="text-center mb-4">Lista de Productos</h1>
 
-<table class="table w-100">
-    <thead>
-        <tr>
-            <th>Código</th>
-            <th>Nombre</th>
-            <th>Precio</th>
-            <th>Stock</th>
-            <th>Categoria</th>
-        </tr>
-    </thead>
-    <tbody>
-        {{#each productos}}
-        <tr>
-            <td>{{code}}</td>
-            <td>{{title}}</td>
-            <td>{{price}}</td>
-            <td>{{stock}}</td>
-            <td>{{category}}</td>
-        </tr>
-        {{/each}}
-    </tbody>
-</table>
+    <table class="table table-hover shadow-sm">
+        <thead class="table-dark">
+            <tr>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Categoría</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each productos}}
+            <tr>
+                <td>{{this.code}}</td>
+                <td>{{this.title}}</td>
+                <td>${{this.price}}</td>
+                <td>{{this.stock}}</td>
+                <td>{{this.category}}</td>
+                <td>
+                    <a href="/products/{{this._id}}" class="btn btn-info btn-sm">Ver Detalle</a>
+                    <button class="btn btn-primary btn-sm" onclick="addToCart('{{this._id}}')">
+                        Añadir
+                    </button>
+                </td>
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+
+    <nav aria-label="Navegación de productos" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {{#if hasPrevPage}}
+            <li class="page-item">
+                <a class="page-link" href="/home?page={{prevPage}}">« Anterior</a>
+            </li>
+            {{else}}
+            <li class="page-item disabled"><span class="page-link">« Anterior</span></li>
+            {{/if}}
+
+            <li class="page-item active">
+                <span class="page-link">Página {{currentPage}} de {{totalPages}}</span>
+            </li>
+
+            {{#if hasNextPage}}
+            <li class="page-item">
+                <a class="page-link" href="/home?page={{nextPage}}">Siguiente »</a>
+            </li>
+            {{else}}
+            <li class="page-item disabled"><span class="page-link">Siguiente »</span></li>
+            {{/if}}
+        </ul>
+    </nav>
+</div>
+
+<script>
+    const cartId = '6967af242ca9fd629b3abfce';
+
+    function addToCart(productId){
+        fetch(`/api/carts/${cartId}/product/${productId}`, {
+            method: 'POST'
+        }).then(res => res.json())
+            .then(data => {
+                if (data.status === "success") {
+                    alert("¡Producto añadido al carrito!");
+                } else {
+                    alert("Error al añadir producto.");
+                }
+            })
+            .catch(err => console.error("Error:", err));
+    }
+
+
+</script>
